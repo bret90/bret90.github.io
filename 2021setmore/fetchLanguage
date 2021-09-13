@@ -197,7 +197,7 @@
       "send_text": "Ναι, στείλτε μου ένα μήνυμα στο κινητό για υπενθύμιση",
       "sep": "Σεπ",
       "september": "Σεπτέμβριος",
-      "serv_appear_once_avail": "Services and classes will appear again when available"
+      "serv_appear_once_avail": "Services and classes will appear again when available",
       "service": "Service",
       "services": "Services",
       "setmore": "Setmore",
@@ -271,7 +271,7 @@
       "your_tz": "Your time zone",
       "your": "Δικό σας",
       "zip_req": "Zip code is required",
-      "zip": "Zip code",
+      "zip": "Zip code"
     }
   }
 }
