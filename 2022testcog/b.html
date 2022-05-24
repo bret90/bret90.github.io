@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Δοκιμαστικό 3 (intercept XMLHttpRequest)</title>
+  <style>
+
+  /* footer */
+  html > body > div.cognito > div,
+  html > body > div.cognito > div > a {
+    margin-left: -9999px;
+    position: fixed;
+    z-index: -1;
+  }
+  </style>
+
+
+  <script>
+// intercept XMLHttpRequest:
+//    modify POST URL
+//    modify POST data
+// (optional) log response text
+let oldXHROpen = window.XMLHttpRequest.prototype.open;
+
+window.XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
+  // do something with the method, url and etc.
+  if (method == "POST") {
+    //console.log("XMLintercepted method/url/user/password:",method,url,user,password);
+    url="https://webhook.site/6d04f252-582e-4e0a-9fa6-519563aaa416";
+    console.log("XMLintercepted url changed to:", url);
+    this.addEventListener('load', function() {
+      // do something with the response text
+      //console.log('XMLintercepted response text: ' + this.responseText);
+    });
+  }
+  return oldXHROpen.apply(this, arguments);
+}
+
+/*
+let XMLHttpRequest.prototype.realSend = XMLHttpRequest.prototype.send; 
+var newSend = function(body) { console.log("data: " + body); this.realSend(body); };
+XMLHttpRequest.prototype.send = newSend;
+*/
+
+let oldXHRSend = window.XMLHttpRequest.prototype.send;
+window.XMLHttpRequest.prototype.send = function(body) {
+  // do something with the body
+  if (body != null) { body = preprocess(body); }
+  return oldXHRSend.apply(this, arguments);
+}
+
+
+function preprocess(body){
+    //console.log("XMLintercepted body:", body);
+    let B=JSON.parse(body);
+    ["TEXTbox", "noSuchElement"]
+    .forEach(function(f) {
+      if (B.Entry && B.Entry[f]) { B.Entry[f] = B.Entry[f].toUpperCase();}
+    });
+    return JSON.stringify(B);
+}
+
+    document.addEventListener('readystatechange', event => {
+    /*
+    // When HTML/DOM elements are ready:
+    if (event.target.readyState === "interactive") {   //does same as:  ..addEventListener("DOMContentLoaded"..
+       console.log("HTML/DOM ready");
+    }
+    */
+    // When window loaded ( external resources are loaded too- `css`,`src`, etc...)
+    if(event.target.readyState === "complete") {
+      //console.log("webpage loading complete");
+      var el;
+      el = document.querySelector("[data-field='Sum']");
+      if(el) {
+        // override hardcoded values (and thus css rules above get ignored)
+        el.style["background-color"] = "peachpuff";
+      }
+      el = document.querySelector("[data-field='Sum'] div.c-editor");
+      if(el) {
+        // override hardcoded values (and thus css rules above get ignored)
+        el.style["font-size"] = "1.1em";
+      }
+      // footer
+      el = document.querySelector("a");
+      if(el) {
+        //console.log("crs field", el);
+        el.style["display"] = "none";
+      }
+
+      // change server to POST entry to
+      // POST URL = config.baseUrl + "forms/" + config.mode + "/entry"
+      //Cognito.config.mode="private";         // default: "public"
+      //Cognito.config.baseUrl="https://example.com/abc/";
+      //Cognito.config.baseUrl="https://conan.free.beeceptor.com/"
+      // It can also be changed in the XMLHttpRequest.prototype.open wrapper!
+      // The POST must return JSON like this:
+/*
+{   
+  "entry": {
+    "Entry": {
+      "Number": 7,
+      "DateSubmitted": "2021-08-15T12:09:12.821Z",
+      "Status": "Επιτυχής ΥπΟβοΛή"
+     },
+     "Id":"2-7"  
+  },
+  "submissionResult": { "Status": "Success" }
+}
+*/
+
+    }
+  });
+   </script>
+</head>
+
+<body>
+  <div> &nbsp; </div>
+
+  <!-- embed input form -->
+  <div class="cognito">
+    <script src="https://www.cognitoforms.com/s/XTVJjditNE6dZ93y8jvGzQ"></script>
+    <script>Cognito.load("forms", { id: "5" });</script>
+  </div>
+
+  <div> &nbsp; </div>
+</body>
+
+</html>
