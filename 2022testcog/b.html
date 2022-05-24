@@ -1,130 +1,78 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<html>
 <head>
-  <meta charset="utf-8" />
-  <title>Δοκιμαστικό 3 (intercept XMLHttpRequest)</title>
-  <style>
-
-  /* footer */
-  html > body > div.cognito > div,
-  html > body > div.cognito > div > a {
-    margin-left: -9999px;
-    position: fixed;
-    z-index: -1;
-  }
-  </style>
-
-
-  <script>
-// intercept XMLHttpRequest:
-//    modify POST URL
-//    modify POST data
-// (optional) log response text
-let oldXHROpen = window.XMLHttpRequest.prototype.open;
-
-window.XMLHttpRequest.prototype.open = function(method, url, async, user, password) {
-  // do something with the method, url and etc.
-  if (method == "POST") {
-    //console.log("XMLintercepted method/url/user/password:",method,url,user,password);
-    url="https://conan.free.beeceptor.com/";
-    console.log("XMLintercepted url changed to:", url);
-    this.addEventListener('load', function() {
-      // do something with the response text
-      //console.log('XMLintercepted response text: ' + this.responseText);
-    });
-  }
-  return oldXHROpen.apply(this, arguments);
-}
-
-/*
-let XMLHttpRequest.prototype.realSend = XMLHttpRequest.prototype.send; 
-var newSend = function(body) { console.log("data: " + body); this.realSend(body); };
-XMLHttpRequest.prototype.send = newSend;
-*/
-
-let oldXHRSend = window.XMLHttpRequest.prototype.send;
-window.XMLHttpRequest.prototype.send = function(body) {
-  // do something with the body
-  if (body != null) { body = preprocess(body); }
-  return oldXHRSend.apply(this, arguments);
-}
-
-
-function preprocess(body){
-    //console.log("XMLintercepted body:", body);
-    let B=JSON.parse(body);
-    ["TEXTbox", "noSuchElement"]
-    .forEach(function(f) {
-      if (B.Entry && B.Entry[f]) { B.Entry[f] = B.Entry[f].toUpperCase();}
-    });
-    return JSON.stringify(B);
-}
-
-    document.addEventListener('readystatechange', event => {
-    /*
-    // When HTML/DOM elements are ready:
-    if (event.target.readyState === "interactive") {   //does same as:  ..addEventListener("DOMContentLoaded"..
-       console.log("HTML/DOM ready");
-    }
-    */
-    // When window loaded ( external resources are loaded too- `css`,`src`, etc...)
-    if(event.target.readyState === "complete") {
-      //console.log("webpage loading complete");
-      var el;
-      el = document.querySelector("[data-field='Sum']");
-      if(el) {
-        // override hardcoded values (and thus css rules above get ignored)
-        el.style["background-color"] = "peachpuff";
-      }
-      el = document.querySelector("[data-field='Sum'] div.c-editor");
-      if(el) {
-        // override hardcoded values (and thus css rules above get ignored)
-        el.style["font-size"] = "1.1em";
-      }
-      // footer
-      el = document.querySelector("a");
-      if(el) {
-        //console.log("crs field", el);
-        el.style["display"] = "none";
-      }
-
-      // change server to POST entry to
-      // POST URL = config.baseUrl + "forms/" + config.mode + "/entry"
-      //Cognito.config.mode="private";         // default: "public"
-      //Cognito.config.baseUrl="https://example.com/abc/";
-      //Cognito.config.baseUrl="https://conan.free.beeceptor.com/"
-      // It can also be changed in the XMLHttpRequest.prototype.open wrapper!
-      // The POST must return JSON like this:
-/*
-{   
-  "entry": {
-    "Entry": {
-      "Number": 7,
-      "DateSubmitted": "2021-08-15T12:09:12.821Z",
-      "Status": "Επιτυχής ΥπΟβοΛή"
-     },
-     "Id":"2-7"  
-  },
-  "submissionResult": { "Status": "Success" }
-}
-*/
-
-    }
-  });
-   </script>
+ <meta charset="utf-8">
+ <title>v2 code test</title>
 </head>
-
 <body>
-  <div> &nbsp; </div>
 
-  <!-- embed input form -->
-  <div class="cognito">
-    <script src="https://www.cognitoforms.com/s/XTVJjditNE6dZ93y8jvGzQ"></script>
-    <script>Cognito.load("forms", { id: "25" });</script>
-  </div>
+<!-- insert v2 (beta) cut 'n' paste code here -->
+<script src="https://www.cognitoforms.com/f/seamless.js" data-key="XTVJjditNE6dZ93y8jvGzQ" data-form="4"></script>
 
-  <div> &nbsp; </div>
+
+<script>
+  // ########## wait until HTML/DOM ready
+  document.addEventListener('readystatechange', event => {
+  /*
+  // When HTML/DOM elements are ready:
+  if (event.target.readyState === "interactive") {   //does same as:  ..addEventListener("DOMContentLoaded"..
+     console.log("HTML/DOM ready");
+  }
+  */
+  // When window loaded ( external resources are loaded too- `css`,`src`, etc...)
+  if(event.target.readyState === "complete") {
+    //console.log("webpage loading complete");
+
+
+    // ########## wait until XHR is complete
+    // step 1: hide page
+    var el;
+    el = document.querySelector('html');
+    if (el) { el.style["opacity"] = 0; }
+
+    // step 2: wait until undesired parts get created
+    // every N milliseconds check for the parts existence;
+    // when they are found to be present
+    //   a) hide undesired elements
+    //   b) apply any desired form styling
+    //   c) un-hide page
+
+    (function() {
+      var breakOut = false;
+      var c = 0;
+      var timeout = setInterval(function() {
+
+        // undesired parts:
+        var el1 = document.querySelector('.cog-branding');
+        var el2 = document.querySelector('.cog-abuse');
+        if(el1 && el2) {
+          //console.log("undesired elements found");
+          // a) hide undesired elements
+          el1.style["display"] = "none";
+          el2.style["display"] = "none";
+
+
+          // b) apply any desired form styling
+          el = document.querySelector('.cog-form');
+          if (el) el.style["box-shadow"] = "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)";
+          el = document.querySelector('.cog-button');
+          if (el) el.style["margin"] = "15px";
+
+
+          // c) un-hide page
+          el = document.querySelector('html');
+          if (el) el.style["opacity"] = 1;
+          breakOut = true;
+        }
+
+        c++;
+        //console.log("waiting for XHR to complete:",c);
+        if (breakOut) { clearInterval(timeout); }
+      }, 200);
+    })();
+  }
+});
+</script>
+
 </body>
-
 </html>
+
